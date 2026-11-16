@@ -6,24 +6,17 @@ and storage backends (local, S3, GCS, Azure).
 
 Example usage:
 
-    from lokryn_pipe_audit import (
-        load_contract,
-        validate_data,
-        Executor,
-        JsonlLogger,
-    )
-
-    # Load a contract
-    contract = load_contract("contracts/example.toml")
+    from lokryn_pipe_audit import validate_data
 
     # Validate data
     with open("data.csv", "rb") as f:
         data = f.read()
 
-    outcome = await validate_data(data, contract)
+    outcome = await validate_data(data, "contracts/example.toml")
     print(f"Passed: {outcome.passed}")
     print(f"Pass count: {outcome.pass_count}")
     print(f"Fail count: {outcome.fail_count}")
+    print(f"Skip count: {outcome.skip_count}")
 """
 
 from __future__ import annotations

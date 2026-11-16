@@ -260,6 +260,8 @@ def _parse_file_contracts(data: dict[str, Any] | None) -> FileContracts | None:
     """Parse file-level contracts from TOML data."""
     if data is None:
         return None
+    if "rules" in data:
+        raise ContractParseError("File contracts use 'validation', not 'rules'")
     validation = data.get("validation", [])
     return FileContracts(validation=_parse_validation_rules(validation))
 
@@ -268,6 +270,10 @@ def _parse_column_contracts(columns: list[dict[str, Any]]) -> list[ColumnContrac
     """Parse column-level contracts from TOML data."""
     result = []
     for col in columns:
+        if "rules" in col:
+            raise ContractParseError(
+                f"Column '{col.get('name', '')}' uses 'rules'; use 'validation' instead"
+            )
         validation = col.get("validation", [])
         result.append(
             ColumnContracts(

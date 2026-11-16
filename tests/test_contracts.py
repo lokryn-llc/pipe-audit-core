@@ -108,6 +108,18 @@ class TestParseContractData:
             parse_contract_data(data)
         assert "Missing required 'contract' section" in str(exc_info.value)
 
+    @pytest.mark.parametrize("include_validation", [False, True])
+    @pytest.mark.parametrize("section", ["file", "columns"])
+    def test_rejects_rules_key(self, section, include_validation):
+        rules = {"rules": [{"rule": "not_null"}]}
+        if include_validation:
+            rules["validation"] = []
+        data = {"contract": {"name": "test", "version": "1.0"}}
+        data[section] = [{"name": "id", **rules}] if section == "columns" else rules
+
+        with pytest.raises(ContractParseError, match="validation"):
+            parse_contract_data(data)
+
 
 class TestLoadContract:
     """Tests for load_contract."""
